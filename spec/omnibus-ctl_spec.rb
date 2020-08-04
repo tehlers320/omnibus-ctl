@@ -16,6 +16,7 @@
 #
 
 require File.join(File.dirname(__FILE__), "spec_helper")
+require 'chef-utils/dist'
 
 describe Omnibus::Ctl do
   standard_commands = %w{
@@ -41,7 +42,7 @@ describe Omnibus::Ctl do
   }
 
   all_commands = standard_commands + service_commands
-  let(:file_path) { "/etc/chef-server/chef-server-running.json" }
+  let(:file_path) { "/etc/chef-server/#{ChefUtils::Dist::Server::SERVER}-running.json" }
   let(:config_hash) do
     { 'chef_server' => { 'attr1' => true,
                          'removed_services' => ['sv1','sv2'],
