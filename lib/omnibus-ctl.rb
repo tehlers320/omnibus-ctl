@@ -17,6 +17,7 @@
 require "omnibus-ctl/version"
 require 'json'
 require 'fileutils'
+require 'chef-config/dist'
 
 # For license checks
 require 'io/console'
@@ -440,8 +441,8 @@ EOM
     # returns nil when chef-server-running.json does not exist
     def running_config
       @running_config ||= begin
-        if File.exists?("#{etc_path}/chef-server-running.json")
-          JSON.parse(File.read("#{etc_path}/chef-server-running.json"))
+        if File.exists?("#{etc_path}/#{ChefConfig::Dist::SERVER}-running.json")
+          JSON.parse(File.read("#{etc_path}/#{ChefConfig::Dist::SERVER}-running.json"))
         end
       end
     end
@@ -498,7 +499,7 @@ EOM
         log_level = ""
       end
       remove_old_node_state
-      cmd = "#{base_path}/embedded/bin/chef-client #{log_level} -z -c #{base_path}/embedded/cookbooks/solo.rb -j #{attr_location}"
+      cmd = "#{base_path}/embedded/bin/#{ChefConfig::Dist::CLIENT} #{log_level} -z -c #{base_path}/embedded/cookbooks/solo.rb -j #{attr_location}"
       cmd += " #{args}" unless args.empty?
       run_command(cmd)
     end
@@ -884,7 +885,7 @@ EOM
   <<EOM
 -------------------------------------------------------------------
 The service #{service} is running externally and cannot be managed
-vi chef-server-ctl.  Please log into #{external_services[service]['vip'] }
+vi #{ChefConfig::Dist::SERVER_CTL}.  Please log into #{external_services[service]['vip'] }
 to manage it directly.
 -------------------------------------------------------------------
 EOM
